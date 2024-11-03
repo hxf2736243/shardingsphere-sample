@@ -1,0 +1,28 @@
+server:
+  port: 8888
+
+spring:
+  main:
+    allow-circular-references: true
+#  autoconfigure:
+#    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:sharding.yaml
+
+logging:
+  level:
+    root: INFO
+    com.boxer.mapper: debug
+    org.springframework: info
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted  # 全局逻辑删除字段
+      logic-delete-value: true       # 逻辑已删除值
+      logic-not-delete-value: false  # 逻辑未删除值
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.boxer.po
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

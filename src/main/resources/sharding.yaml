@@ -1,0 +1,43 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName:  org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://8.140.255.99:5432/yc0?ApplicationName=spring-dependency
+    username: postgres
+    password: 123456
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName:  org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://8.140.255.99:5432/yc1?ApplicationName=spring-dependency
+    username: postgres
+    password: 123456
+
+rules:
+  - !SHARDING
+    tables:
+      t_order:
+        actualDataNodes: ds_$->{0..1}.t_order_$->{0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: buyer_id
+            shardingAlgorithmName: buyer_id_inline
+        tableStrategy:
+          standard:
+            shardingColumn: id  # 表分片键
+            shardingAlgorithmName: t_order_inline
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: buyer_id  # 数据库分片键
+        shardingAlgorithmName: buyer_id_inline
+    shardingAlgorithms:
+      buyer_id_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds_$->{buyer_id % 2}
+      t_order_inline:
+        type: INLINE
+        props:
+          algorithm-expression: t_order_$->{id % 2}
+
+props:
+  sql-show: false
